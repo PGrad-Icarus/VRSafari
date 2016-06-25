@@ -275,7 +275,7 @@ public class StereoController : MonoBehaviour {
   private void CreateEye(GvrViewer.Eye eye) {
     string nm = name + (eye == GvrViewer.Eye.Left ? " Left" : " Right");
     GameObject go = new GameObject(nm);
-    go.transform.SetParent(transform, false);
+	go.transform.SetParent(transform, false);
     go.AddComponent<Camera>().enabled = false;
     var GvrEye = go.AddComponent<GvrEye>();
     GvrEye.eye = eye;

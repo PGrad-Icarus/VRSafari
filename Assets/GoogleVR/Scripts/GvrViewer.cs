@@ -500,13 +500,13 @@ public class GvrViewer : MonoBehaviour {
     if (preRender == null) {
       var go = new GameObject("PreRender", typeof(GvrPreRender));
       go.SendMessage("Reset");
-      go.transform.parent = transform;
+	  go.transform.parent = transform;
     }
     var postRender = UnityEngine.Object.FindObjectOfType<GvrPostRender>();
     if (postRender == null) {
       var go = new GameObject("PostRender", typeof(GvrPostRender));
       go.SendMessage("Reset");
-      go.transform.parent = transform;
+	  go.transform.parent = transform;
     }
   }
 
@@ -573,7 +573,7 @@ public class GvrViewer : MonoBehaviour {
 
   private void DispatchEvents() {
     // Update flags first by copying from device and other inputs.
-    Triggered = device.triggered || Input.GetMouseButtonDown(0);
+	Triggered = device.triggered;
     Tilted = device.tilted;
     ProfileChanged = device.profileChanged;
     BackButtonPressed = device.backButtonPressed || Input.GetKeyDown(KeyCode.Escape);

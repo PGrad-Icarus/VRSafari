@@ -22,6 +22,7 @@
 
 using UnityEngine;
 using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
 /// This script provides an implemention of Unity's `BaseInputModule` class, so
 /// that Canvas-based (_uGUI_) UI elements can be selected by looking at them and
@@ -112,18 +113,30 @@ public class GazeInputModule : BaseInputModule {
     UpdateReticle(gazeObjectPrevious);
 
     // Handle input
-    if (!Input.GetMouseButtonDown(0) && Input.GetMouseButton(0)) {
-      HandleDrag();
-    } else if (Time.unscaledTime - pointerData.clickTime < clickTime) {
-      // Delay new events until clickTime has passed.
-    } else if (!pointerData.eligibleForClick &&
-               (GvrViewer.Instance.Triggered || Input.GetMouseButtonDown(0))) {
-      // New trigger action.
-      HandleTrigger();
-    } else if (!GvrViewer.Instance.Triggered && !Input.GetMouseButton(0)) {
-      // Check if there is a pending click to handle.
-      HandlePendingClick();
-    }
+	if (!vrModeOnly) {
+		if (!Input.GetMouseButtonDown (0) && Input.GetMouseButton (0)) {
+			HandleDrag ();
+		} else if (Time.unscaledTime - pointerData.clickTime < clickTime) {
+			// Delay new events until clickTime has passed.
+		} else if (!pointerData.eligibleForClick &&
+		          (GvrViewer.Instance.Triggered || Input.GetMouseButtonDown (0))) {
+			// New trigger action.
+			HandleTrigger ();
+		} else if (!GvrViewer.Instance.Triggered && !Input.GetMouseButton (0)) {
+			// Check if there is a pending click to handle.
+			HandlePendingClick ();
+		}
+	} else {
+		if (Time.unscaledTime - pointerData.clickTime < clickTime) {
+			// Delay new events until clickTime has passed.
+		} else if (!pointerData.eligibleForClick && GvrViewer.Instance.Triggered) {
+			// New trigger action.
+			HandleTrigger ();
+		} else if (!GvrViewer.Instance.Triggered && !Input.GetMouseButton (0)) {
+			// Check if there is a pending click to handle.
+			HandlePendingClick ();
+		}
+	}
   }
   /// @endcond
 
@@ -290,7 +303,7 @@ public class GazeInputModule : BaseInputModule {
     return null;
   }
 
-  Vector3 GetIntersectionPosition() {
+  public Vector3 GetIntersectionPosition() {
     // Check for camera
     Camera cam = pointerData.enterEventCamera;
     if (cam == null) {

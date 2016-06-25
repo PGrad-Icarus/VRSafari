@@ -220,7 +220,7 @@ public class GvrReticle : MonoBehaviour, IGvrGazePointer {
   }
 
   private void SetGazeTarget(Vector3 target, bool interactive) {
-    Vector3 targetLocalPosition = transform.InverseTransformPoint(target);
+	Vector3 targetLocalPosition = transform.InverseTransformPoint(target);
 
     reticleDistanceInMeters =
         Mathf.Clamp(targetLocalPosition.z, kReticleDistanceMin, kReticleDistanceMax);

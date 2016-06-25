@@ -5,7 +5,7 @@ public class Move : MonoBehaviour {
 	public float speed;
 	private Vector3 motion;
 	void Start() {
-		motion = new Vector3 (-speed,0,0);
+		motion = new Vector3 (0,0,speed);
 	}
 	void Update () {
 		transform.Translate (motion);

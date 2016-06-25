@@ -1,0 +1,35 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2008
+
+Project("{EE3E6885-C22A-002C-8301-48630132DD49}") = "VRSafari", "Assembly-CSharp-firstpass.csproj", "{EA1373A9-F2DF-9F6C-C1FF-87BACC7224CC}"
+EndProject
+Project("{EE3E6885-C22A-002C-8301-48630132DD49}") = "VRSafari", "Assembly-CSharp.csproj", "{5B3A6971-90B5-344C-B9C6-A352D165E429}"
+EndProject
+Project("{EE3E6885-C22A-002C-8301-48630132DD49}") = "VRSafari", "Assembly-CSharp-Editor.csproj", "{755CC8B7-E217-2AB1-C6A0-56264F80AA07}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EA1373A9-F2DF-9F6C-C1FF-87BACC7224CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA1373A9-F2DF-9F6C-C1FF-87BACC7224CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA1373A9-F2DF-9F6C-C1FF-87BACC7224CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA1373A9-F2DF-9F6C-C1FF-87BACC7224CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B3A6971-90B5-344C-B9C6-A352D165E429}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B3A6971-90B5-344C-B9C6-A352D165E429}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B3A6971-90B5-344C-B9C6-A352D165E429}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B3A6971-90B5-344C-B9C6-A352D165E429}.Release|Any CPU.Build.0 = Release|Any CPU
+		{755CC8B7-E217-2AB1-C6A0-56264F80AA07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{755CC8B7-E217-2AB1-C6A0-56264F80AA07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{755CC8B7-E217-2AB1-C6A0-56264F80AA07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{755CC8B7-E217-2AB1-C6A0-56264F80AA07}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Assembly-CSharp.csproj
+	EndGlobalSection
+EndGlobal
