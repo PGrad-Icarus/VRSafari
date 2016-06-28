@@ -88,9 +88,15 @@
      <Compile Include="Assets\Scripts\AddScore.cs" />
      <Compile Include="Assets\Scripts\CameraReticle.cs" />
      <Compile Include="Assets\Scripts\CameraShot.cs" />
+     <Compile Include="Assets\Scripts\CreateDBScript.cs" />
+     <Compile Include="Assets\Scripts\DataService.cs" />
      <Compile Include="Assets\Scripts\MethodExtensionForMonoBehaviourTransformNewBehaviourScript.cs" />
      <Compile Include="Assets\Scripts\Move.cs" />
      <Compile Include="Assets\Scripts\PathManager.cs" />
+     <Compile Include="Assets\Scripts\PictureBehavior.cs" />
+     <Compile Include="Assets\Scripts\PictureGroup.cs" />
+     <Compile Include="Assets\Scripts\PictureObject.cs" />
+     <Compile Include="Assets\Scripts\Popup.cs" />
      <Compile Include="Assets\Scripts\SQLite.cs" />
      <Compile Include="Assets\Scripts\ScoreManager.cs" />
      <Compile Include="Assets\Scripts\Singleton.cs" />

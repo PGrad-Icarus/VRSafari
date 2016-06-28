@@ -113,20 +113,20 @@ public class GazeInputModule : BaseInputModule {
     UpdateReticle(gazeObjectPrevious);
 
     // Handle input
-	if (!vrModeOnly) {
-		if (!Input.GetMouseButtonDown (0) && Input.GetMouseButton (0)) {
-			HandleDrag ();
-		} else if (Time.unscaledTime - pointerData.clickTime < clickTime) {
-			// Delay new events until clickTime has passed.
-		} else if (!pointerData.eligibleForClick &&
-		          (GvrViewer.Instance.Triggered || Input.GetMouseButtonDown (0))) {
-			// New trigger action.
-			HandleTrigger ();
-		} else if (!GvrViewer.Instance.Triggered && !Input.GetMouseButton (0)) {
-			// Check if there is a pending click to handle.
-			HandlePendingClick ();
-		}
-	} else {
+	//if (!vrModeOnly) {
+	if (!Input.GetMouseButtonDown (0) && Input.GetMouseButton (0)) {
+		HandleDrag ();
+	} else if (Time.unscaledTime - pointerData.clickTime < clickTime) {
+		// Delay new events until clickTime has passed.
+	} else if (!pointerData.eligibleForClick &&
+	          (GvrViewer.Instance.Triggered || Input.GetMouseButtonDown (0))) {
+		// New trigger action.
+		HandleTrigger ();
+	} else if (!GvrViewer.Instance.Triggered && !Input.GetMouseButton (0)) {
+		// Check if there is a pending click to handle.
+		HandlePendingClick ();
+	}
+	/*} else {
 		if (Time.unscaledTime - pointerData.clickTime < clickTime) {
 			// Delay new events until clickTime has passed.
 		} else if (!pointerData.eligibleForClick && GvrViewer.Instance.Triggered) {
@@ -136,7 +136,7 @@ public class GazeInputModule : BaseInputModule {
 			// Check if there is a pending click to handle.
 			HandlePendingClick ();
 		}
-	}
+	}*/
   }
   /// @endcond
 

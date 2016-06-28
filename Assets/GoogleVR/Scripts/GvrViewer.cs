@@ -573,7 +573,7 @@ public class GvrViewer : MonoBehaviour {
 
   private void DispatchEvents() {
     // Update flags first by copying from device and other inputs.
-	Triggered = device.triggered;
+	Triggered = device.triggered || Input.GetMouseButtonDown (0);
     Tilted = device.tilted;
     ProfileChanged = device.profileChanged;
     BackButtonPressed = device.backButtonPressed || Input.GetKeyDown(KeyCode.Escape);

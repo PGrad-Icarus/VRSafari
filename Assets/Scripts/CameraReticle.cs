@@ -70,6 +70,8 @@ public class CameraReticle : MonoBehaviour, IGvrGazePointer {
 
 	private int colliderMultiplier;
 	private bool isInteractiveAndIsNotNull = false;
+	private bool zoomIn = false;
+	private float fieldOfView;
 
 	void Start () {
 		cameraShot = gameObject.GetComponentInParent<CameraShot> ();
@@ -156,20 +158,30 @@ public class CameraReticle : MonoBehaviour, IGvrGazePointer {
 		// Put your reticle trigger start logic here :)
 		//if(isInteractiveAndIsNotNull)
 		kReticleGrowthAngle = kReticleGrowthAngle * 10f/*** colliderMultiplier*/;
+		zoomIn = true;
+		if(camera != null)
+			StartCoroutine (zoom (camera.GetComponentsInChildren<Camera>()));
+	}
+
+	public IEnumerator zoom(Camera[] lrCamera) {
+		while (zoomIn) {
+			foreach (Camera camera in lrCamera)
+				camera.fieldOfView -= 0.6f;
+			yield return null;
+		}
+		foreach (Camera camera in lrCamera)
+			camera.ResetFieldOfView ();
 	}
 
 	/// Called when a trigger event is finished. This is practically when
 	/// the user releases the trigger.
 	public void OnGazeTriggerEnd(Camera camera) {
 		// Put your reticle trigger end logic here :)
+		zoomIn = false;
 		if (isInteractiveAndIsNotNull) {
 			snapshot.Play ();
-			if (targetObj.tag.CompareTo ("Animal") == 0) {
-				if (isFacing (targetObj))
-					Debug.Log ("Nice shot!");
-				else
-					Debug.Log ("Close but no cigar!");
-			}
+			if (targetObj.tag.CompareTo ("Animal") == 0) 
+				Debug.Log (isFacing (targetObj) ? "Nice shot!" : "Close but no cigar!");
 			scanWithinReticle ();
 			cameraShot.TakeCameraShot (materialComp.GetFloat("_OuterDiameter"));
 		}

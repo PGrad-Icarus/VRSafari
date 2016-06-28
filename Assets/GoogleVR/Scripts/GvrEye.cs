@@ -151,7 +151,8 @@ public class GvrEye : MonoBehaviour {
     proj[1, 1] *= zoom;
 
     // Set the eye camera's projection for rendering.
-    cam.projectionMatrix = proj;
+	//COMMENTED OUT TO ALLOW ZOOM IN DEPTH
+    //cam.projectionMatrix = proj;
     if (Application.isEditor) {
       // So you can see the approximate frustum in the Scene view when the camera is selected.
       cam.fieldOfView = 2 * Mathf.Atan(1 / proj[1, 1]) * Mathf.Rad2Deg;
