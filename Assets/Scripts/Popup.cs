@@ -17,6 +17,7 @@ public class Popup : MonoBehaviour {
 		yTranslate = 10;
 	}
 
+	//Pull an object hidden under the ground into view ("spawning" without the cost of spawning)
 	public void popUpOnce() {
 		GameObject summoned;
 		AudioSource sound;
@@ -32,6 +33,7 @@ public class Popup : MonoBehaviour {
 		}
 	}
 
+	//"Spawn" (make visible) a hidden object for a short period of time.
 	public void sleight() {
 		if (!dropped) {
 			dropped = true;
