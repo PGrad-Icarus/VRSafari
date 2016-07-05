@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class Family : MonoBehaviour {
 	private Dictionary <GameObject, int> countMembers;
-
+	private bool open = true;
 	void Awake () {
 		GameObject go;
 		int numGOs;
@@ -19,8 +19,10 @@ public class Family : MonoBehaviour {
 	}
 
 	void Update () {
-		if(CameraReticle.numGOmap.Count == 0)
+		if (!open && CameraReticle.numGOmap.Count == 0) {
 			BroadcastMessage ("Open");
+			open = true;
+		}
 	}
 
 	public void searchFamily () {
@@ -35,5 +37,6 @@ public class Family : MonoBehaviour {
 		}
 		ScoreManager.AddPoints (totalScore * totalHits);
 		BroadcastMessage ("Searched");
+		open = false;
 	}
 }

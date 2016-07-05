@@ -6,7 +6,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{A8423813-C562-7D66-C5DD-63D8FD712C1F}</ProjectGuid>
+    <ProjectGuid>{755CC8B7-E217-2AB1-C6A0-56264F80AA07}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp-Editor</AssemblyName>
@@ -64,7 +64,7 @@
      <None Include="Assets\Shaders\ItemGlow.shader" />
      <None Include="Assets\GoogleVR\Resources\SolidColor.shader" />
  <Reference Include="Assembly-UnityScript-firstpass">
- <HintPath>/Users/gpstudent/Desktop/GradUSC/VRSafari.mdlp/Library/ScriptAssemblies/Assembly-UnityScript-firstpass.dll</HintPath>
+ <HintPath>/Users/gpstudent/Desktop/GradUSC/VRSafari/Library/ScriptAssemblies/Assembly-UnityScript-firstpass.dll</HintPath>
  </Reference>
  <Reference Include="UnityEditor.Advertisements">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/Advertisements/Editor/UnityEditor.Advertisements.dll</HintPath>
@@ -91,10 +91,10 @@
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/TreeEditor/Editor/UnityEditor.TreeEditor.dll</HintPath>
  </Reference>
  <Reference Include="Google.ProtocolBuffers">
- <HintPath>/Users/gpstudent/Desktop/GradUSC/VRSafari.mdlp/Assets/Plugins/Google.ProtocolBuffers.dll</HintPath>
+ <HintPath>/Users/gpstudent/Desktop/GradUSC/VRSafari/Assets/Plugins/Google.ProtocolBuffers.dll</HintPath>
  </Reference>
  <Reference Include="CoherentNoise">
- <HintPath>/Users/gpstudent/Desktop/GradUSC/VRSafari.mdlp/Assets/WorldBuilder/Scripts/Helpers/CoherentNoise.dll</HintPath>
+ <HintPath>/Users/gpstudent/Desktop/GradUSC/VRSafari/Assets/WorldBuilder/Scripts/Helpers/CoherentNoise.dll</HintPath>
  </Reference>
  <Reference Include="UnityEditor.Graphs">
  <HintPath>/Applications/Unity/Unity.app/Contents/Frameworks/Managed/UnityEditor.Graphs.dll</HintPath>
@@ -129,9 +129,9 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Assembly-CSharp-firstpass.csproj">
-      <Project>{DDEB142E-0247-5C45-1A97-6541580127CF}</Project>      <Name>Assembly-CSharp-firstpass</Name>    </ProjectReference>
+      <Project>{EA1373A9-F2DF-9F6C-C1FF-87BACC7224CC}</Project>      <Name>Assembly-CSharp-firstpass</Name>    </ProjectReference>
     <ProjectReference Include="Assembly-CSharp.csproj">
-      <Project>{137C8759-4452-D24D-FC53-CF111B771868}</Project>      <Name>Assembly-CSharp</Name>    </ProjectReference>
+      <Project>{5B3A6971-90B5-344C-B9C6-A352D165E429}</Project>      <Name>Assembly-CSharp</Name>    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -6,7 +6,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{137C8759-4452-D24D-FC53-CF111B771868}</ProjectGuid>
+    <ProjectGuid>{5B3A6971-90B5-344C-B9C6-A352D165E429}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -120,7 +120,7 @@
      <None Include="Assets\Shaders\ItemGlow.shader" />
      <None Include="Assets\GoogleVR\Resources\SolidColor.shader" />
  <Reference Include="Assembly-UnityScript-firstpass">
- <HintPath>/Users/gpstudent/Desktop/GradUSC/VRSafari.mdlp/Library/ScriptAssemblies/Assembly-UnityScript-firstpass.dll</HintPath>
+ <HintPath>/Users/gpstudent/Desktop/GradUSC/VRSafari/Library/ScriptAssemblies/Assembly-UnityScript-firstpass.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.UI">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
@@ -129,15 +129,15 @@
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
  </Reference>
  <Reference Include="Google.ProtocolBuffers">
- <HintPath>/Users/gpstudent/Desktop/GradUSC/VRSafari.mdlp/Assets/Plugins/Google.ProtocolBuffers.dll</HintPath>
+ <HintPath>/Users/gpstudent/Desktop/GradUSC/VRSafari/Assets/Plugins/Google.ProtocolBuffers.dll</HintPath>
  </Reference>
  <Reference Include="CoherentNoise">
- <HintPath>/Users/gpstudent/Desktop/GradUSC/VRSafari.mdlp/Assets/WorldBuilder/Scripts/Helpers/CoherentNoise.dll</HintPath>
+ <HintPath>/Users/gpstudent/Desktop/GradUSC/VRSafari/Assets/WorldBuilder/Scripts/Helpers/CoherentNoise.dll</HintPath>
  </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Assembly-CSharp-firstpass.csproj">
-      <Project>{DDEB142E-0247-5C45-1A97-6541580127CF}</Project>      <Name>Assembly-CSharp-firstpass</Name>    </ProjectReference>
+      <Project>{EA1373A9-F2DF-9F6C-C1FF-87BACC7224CC}</Project>      <Name>Assembly-CSharp-firstpass</Name>    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

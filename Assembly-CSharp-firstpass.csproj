@@ -6,7 +6,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{DDEB142E-0247-5C45-1A97-6541580127CF}</ProjectGuid>
+    <ProjectGuid>{EA1373A9-F2DF-9F6C-C1FF-87BACC7224CC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp-firstpass</AssemblyName>
@@ -62,10 +62,10 @@
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
  </Reference>
  <Reference Include="Google.ProtocolBuffers">
- <HintPath>/Users/gpstudent/Desktop/GradUSC/VRSafari.mdlp/Assets/Plugins/Google.ProtocolBuffers.dll</HintPath>
+ <HintPath>/Users/gpstudent/Desktop/GradUSC/VRSafari/Assets/Plugins/Google.ProtocolBuffers.dll</HintPath>
  </Reference>
  <Reference Include="CoherentNoise">
- <HintPath>/Users/gpstudent/Desktop/GradUSC/VRSafari.mdlp/Assets/WorldBuilder/Scripts/Helpers/CoherentNoise.dll</HintPath>
+ <HintPath>/Users/gpstudent/Desktop/GradUSC/VRSafari/Assets/WorldBuilder/Scripts/Helpers/CoherentNoise.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
