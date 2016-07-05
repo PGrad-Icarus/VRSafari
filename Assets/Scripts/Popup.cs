@@ -4,14 +4,11 @@ using System.Collections;
 public class Popup : MonoBehaviour {
 	bool runOnce,
 		 dropped;
-	public string[] stuff = {"who, what, when"};
 	int yTranslate;
-	GameObject[] trees;
-	DataService ds;
+	GameObject tree;
 
 	void Start() {
-		ds = new DataService ("safari.db");
-		trees = GameObject.FindGameObjectsWithTag ("BananaTree");
+		tree = GameObject.Find ("BananaTrees");
 		dropped = false;
 		runOnce = false;
 		yTranslate = 10;
@@ -22,7 +19,7 @@ public class Popup : MonoBehaviour {
 		GameObject summoned;
 		AudioSource sound;
 		if (!runOnce) {
-			foreach (string child in ds.getChildren (this.gameObject.name)) {
+			foreach (string child in DataService.getChildren (this.gameObject.name)) {
 				summoned = GameObject.Find (child);
 				summoned.transform.Translate (new Vector3 (0, 10, 0));
 				sound = summoned.GetComponent<AudioSource> ();
@@ -42,13 +39,12 @@ public class Popup : MonoBehaviour {
 		}
 	}
 
-	public void move() {
-		for (int tree = 0; tree < trees.Length; tree++)
-			trees [tree].transform.Translate (new Vector3 (0, yTranslate, 0));
+	private void move() {
+			tree.transform.Translate (new Vector3 (0, yTranslate, 0));
 	}
 
 	public IEnumerator Switch() {
-		yield return new WaitForSeconds (2.0f);
+		yield return new WaitForSeconds (4.0f);
 		yTranslate = -yTranslate;
 		move ();
 		yTranslate = -yTranslate;

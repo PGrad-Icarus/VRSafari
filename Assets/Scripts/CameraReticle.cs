@@ -27,6 +27,7 @@ using System.Collections.Generic;
 [RequireComponent(typeof(AudioSource))]
 [RequireComponent(typeof(GazeInputModule))]
 public class CameraReticle : MonoBehaviour, IGvrGazePointer {
+	public static Dictionary<GameObject,int> numGOmap;
 	//Reference to CameraShot sibling component
 	private CameraShot cameraShot;
 
@@ -37,7 +38,8 @@ public class CameraReticle : MonoBehaviour, IGvrGazePointer {
 	public float reticleGrowthSpeed = 8.0f;
 
 	// Private members
-	private Material materialComp;
+	private Material materialComp,
+					 focusComp;
 	private GameObject targetObj;
 	private AudioSource snapshot;
 	private Transform headTransform;
@@ -72,6 +74,7 @@ public class CameraReticle : MonoBehaviour, IGvrGazePointer {
 	private bool isInteractiveAndIsNotNull = false;
 	private bool zoomIn = false;
 	private float fieldOfView;
+	private bool canZoom = false;
 
 	void Start () {
 		cameraShot = gameObject.GetComponentInParent<CameraShot> ();
@@ -80,9 +83,13 @@ public class CameraReticle : MonoBehaviour, IGvrGazePointer {
 
 		materialComp = gameObject.GetComponent<Renderer>().material;
 
+		focusComp = gameObject.GetComponent<MeshRenderer> ().materials [1];
+
 		snapshot = gameObject.GetComponent<AudioSource> (); 
 
-		headTransform = GameObject.Find ("Head").GetComponent<GvrHead> ().transform;
+		headTransform = GameObject.Find ("PlayerHead").GetComponent<GvrHead> ().transform;
+
+		numGOmap = new Dictionary<GameObject,int> ();
 	}
 
 	void OnEnable() {
@@ -157,34 +164,42 @@ public class CameraReticle : MonoBehaviour, IGvrGazePointer {
 	public void OnGazeTriggerStart(Camera camera) {
 		// Put your reticle trigger start logic here :)
 		//if(isInteractiveAndIsNotNull)
-		kReticleGrowthAngle = kReticleGrowthAngle * 10f/*** colliderMultiplier*/;
-		zoomIn = true;
-		if(camera != null)
-			StartCoroutine (zoom (camera.GetComponentsInChildren<Camera>()));
+		if (targetObj != null && targetObj.name == "Gelios_high") {
+			canZoom = true;
+			Debug.Log("zoom!");
+		} else {
+			kReticleGrowthAngle = kReticleGrowthAngle * 10f/*** colliderMultiplier*/;
+			if (canZoom) {
+				zoomIn = true;
+				StartCoroutine (zoom (camera.GetComponentsInChildren<Camera> ()));
+			}
+		}
 	}
 
 	public IEnumerator zoom(Camera[] lrCamera) {
 		while (zoomIn) {
-			foreach (Camera camera in lrCamera)
+			foreach (Camera camera in lrCamera) 
 				camera.fieldOfView -= 0.6f;
 			yield return null;
 		}
 		foreach (Camera camera in lrCamera)
-			camera.ResetFieldOfView ();
+			camera.fieldOfView = 80f;
+		zoomIn = false;
 	}
 
 	/// Called when a trigger event is finished. This is practically when
 	/// the user releases the trigger.
 	public void OnGazeTriggerEnd(Camera camera) {
 		// Put your reticle trigger end logic here :)
-		zoomIn = false;
-		if (isInteractiveAndIsNotNull) {
+		if (isInteractiveAndIsNotNull && targetObj.name != "Text") {
 			snapshot.Play ();
-			if (targetObj.tag.CompareTo ("Animal") == 0) 
+			if (targetObj.tag.Contains("Animal"))
 				Debug.Log (isFacing (targetObj) ? "Nice shot!" : "Close but no cigar!");
-			scanWithinReticle ();
-			cameraShot.TakeCameraShot (materialComp.GetFloat("_OuterDiameter"));
+			cameraShot.TakeCameraShot (materialComp.GetFloat ("_OuterDiameter") - materialComp.GetFloat ("_InnerDiameter"));
+
+			ScoreManager.changeScore (scanWithinReticle ());
 		}
+		zoomIn = false;
 		StartCoroutine (resizeDown ());
 	}
 
@@ -276,6 +291,9 @@ public class CameraReticle : MonoBehaviour, IGvrGazePointer {
 		reticleOuterDiameter =
 			Mathf.Lerp(reticleOuterDiameter, outer_diameter, Time.deltaTime * reticleGrowthSpeed);
 
+
+		focusComp.SetFloat("_OuterDiameter", reticleInnerDiameter * reticleDistanceInMeters);
+		focusComp.SetFloat("_DistanceInMeters", reticleDistanceInMeters);
 		materialComp.SetFloat("_InnerDiameter", reticleInnerDiameter * reticleDistanceInMeters);
 		materialComp.SetFloat("_OuterDiameter", reticleOuterDiameter * reticleDistanceInMeters);
 		materialComp.SetFloat("_DistanceInMeters", reticleDistanceInMeters);
@@ -305,10 +323,9 @@ public class CameraReticle : MonoBehaviour, IGvrGazePointer {
 		return (int) ((float)hits / maxHits * 100f) > 50;
 	}
 
-	public void scanWithinReticle() {
-		int hits = 0;
-		Dictionary<string,GameObject> strToGO = new Dictionary<string,GameObject> ();
-		HashSet<GameObject> uniqueHits = new HashSet<GameObject>();
+	public HashSet<GameObject> scanWithinReticle() {
+		numGOmap.Clear ();
+		HashSet<GameObject> uniqueHits = new HashSet<GameObject> ();
 		RaycastHit hit = new RaycastHit ();
 		GameObject hit_go;
 		Vector3 origin = headTransform.position;
@@ -318,7 +335,8 @@ public class CameraReticle : MonoBehaviour, IGvrGazePointer {
 				direction = forward;
 		int zSteps = Mathf.FloorToInt (360f / inverseResolution),
 			ySteps = 50;
-		Quaternion yRotation = Quaternion.Euler(up * (reticleInnerAngle / 175)),
+		int numHitForGO = 0;
+		Quaternion yRotation = Quaternion.Euler(up * (reticleInnerAngle / 50)),
 		zRotation = Quaternion.Euler(forward * inverseResolution);
 		for(int z = 0; z < ySteps; z++) {
 			direction = yRotation * direction;
@@ -327,14 +345,17 @@ public class CameraReticle : MonoBehaviour, IGvrGazePointer {
 				Physics.Raycast (origin, direction, out hit);
 				if (hit.transform != null) { 
 					hit_go = hit.transform.gameObject;
-					if (hit_go.GetComponent<EventTrigger> () != null) {
-						hits++;
-						if (!uniqueHits.Contains (hit_go)) {
-							uniqueHits.Add (hit_go);
-						}
+					if (hit_go.GetComponent<EventTrigger> () != null && !uniqueHits.Contains (hit_go)) {
+						if (!numGOmap.TryGetValue (hit_go, out numHitForGO))
+							numGOmap.Add (hit_go, 1);
+						else
+							numGOmap [hit_go] = ++numHitForGO;
+						uniqueHits.Add (hit_go);
 					}
 				}
 			}
 		}
+			
+		return uniqueHits;
 	}
 }
