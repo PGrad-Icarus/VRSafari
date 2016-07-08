@@ -3,19 +3,25 @@ using UnityEngine.UI;
 using System.Collections;
 
 public class ButtonManager : MonoBehaviour {
-	public GameObject button,
-					  newJungle;
-	private GameObject startJungle;
-	private 
+	public GameObject button;
+	private GameObject fogGO;
+	private ParticleSystem fog;
 	void Start () {
-		startJungle = GameObject.Find ("Jungle");
+		fogGO = GameObject.Find ("Fog");
+		if (fogGO != null)
+			fog = fogGO.GetComponent<ParticleSystem> ();
 	}
 
-	public void startMoving() {
-		Destroy (startJungle);
-		Instantiate (newJungle);
+	public void startLevel() {
+		if (fog != null)
+			killFog ();
 		Destroy (button);
 		GameObject.Find ("CameraReticle").GetComponent<CameraReticle> ().OnGazeExit (null, null);
-		GameObject.Find ("GvrMain").GetComponent<Move> ().enabled = true;
+		EventManager.TriggerEvent ("StartPlayerMove");
+		EventManager.TriggerEvent ("Move");
+	}
+
+	public void killFog () {
+		fog.startSize -= 10;
 	}
 }

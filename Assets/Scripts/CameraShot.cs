@@ -43,6 +43,7 @@ public class CameraShot : MonoBehaviour {
 		//x = (resWidth - this.screenReticleSize) / 2;
 		//y = (resHeight - this.screenReticleSize) / 2;
 	}
+
 	void LateUpdate() {
 		if (frameMat != null && takeShot) {
 			//image.GetComponent<CanvasRenderer> ().SetAlpha (1f);
@@ -73,6 +74,7 @@ public class CameraShot : MonoBehaviour {
 			takeShot = false;
 		}
 	}
+
 	//Return int array of {x,y,dim} where x and y are the coordinates of the (inner) bottom left corner of the reticle, and dim is the length of the reticle.
 	int[] findReticleDims (Texture2D screen) {
 		int cur = 0,
@@ -102,7 +104,10 @@ public class CameraShot : MonoBehaviour {
 			isLine &= foundRed;
 			if (isLine) {
 				row += reticleWidth;
-				return new int[]{ x + reticleWidth, row, (quarterHeight - row) * 2 };
+				if ((quarterHeight - row) * 2 > 1)
+					return new int[]{ x + reticleWidth, row, (quarterHeight - row) * 2 };
+				else
+					Debug.Log ("failed"); //What do I tell the player when this happens?
 			}
 		}
 		return null;

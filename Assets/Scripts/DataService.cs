@@ -69,8 +69,15 @@ public class DataService : Singleton<DataService> {
 		return null;
 	}
 
-	public static int getScore (GameObject go) {
-		return Instance._connection.Find<Objects> (g => go.name.Contains(g.name)).score;
+	public static bool getScore (GameObject go, out int score) {
+		Objects pictureObject = Instance._connection.Find<Objects> (g => go.name.Contains(g.name));
+		if (pictureObject != null) {
+			score = pictureObject.score;
+			return true;
+		} else {
+			score = 0;
+			return false;
+		}
 	}
 
 	public class Chain {

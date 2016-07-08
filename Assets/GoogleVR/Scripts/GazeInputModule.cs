@@ -183,7 +183,6 @@ public class GazeInputModule : BaseInputModule {
     Vector3 intersectionPosition = GetIntersectionPosition();
     bool isInteractive = pointerData.pointerPress != null ||
         ExecuteEvents.GetEventHandler<IPointerClickHandler>(gazeObject) != null;
-
     if (gazeObject == previousGazedObject) {
       if (gazeObject != null) {
         gazePointer.OnGazeStay(camera, gazeObject, intersectionPosition, isInteractive);

@@ -27,7 +27,8 @@ using System.Collections.Generic;
 [RequireComponent(typeof(AudioSource))]
 [RequireComponent(typeof(GazeInputModule))]
 public class CameraReticle : MonoBehaviour, IGvrGazePointer {
-	public static Dictionary<GameObject,int> numGOmap;
+	public static Dictionary<GameObject,int> registeredHitsByGO;
+	public static bool shotsEnabled = true;
 	//Reference to CameraShot sibling component
 	private CameraShot cameraShot;
 
@@ -40,7 +41,8 @@ public class CameraReticle : MonoBehaviour, IGvrGazePointer {
 	// Private members
 	private Material materialComp,
 					 focusComp;
-	private GameObject targetObj;
+	private GameObject targetObj,
+					   headCanvas;
 	private AudioSource snapshot;
 	private Transform headTransform;
 	private Vector3 targetLocalPosition;
@@ -89,7 +91,9 @@ public class CameraReticle : MonoBehaviour, IGvrGazePointer {
 
 		headTransform = GameObject.Find ("PlayerHead").GetComponent<GvrHead> ().transform;
 
-		numGOmap = new Dictionary<GameObject,int> ();
+		registeredHitsByGO = new Dictionary<GameObject,int> ();
+
+		headCanvas = GameObject.Find("HeadCanvas");
 	}
 
 	void OnEnable() {
@@ -130,7 +134,7 @@ public class CameraReticle : MonoBehaviour, IGvrGazePointer {
 			Collider targetCollider = targetObject.GetComponent<Collider> ();
 			colliderMultiplier = (int) (targetCollider.bounds.size.y * targetCollider.transform.localScale.y);
 		}*/
-		SetGazeTarget(intersectionPosition, isInteractive);
+		SetGazeTarget(intersectionPosition, isInteractiveAndIsNotNull);
 	}
 
 	/// Called every frame the user is still looking at a valid GameObject. This
@@ -141,7 +145,7 @@ public class CameraReticle : MonoBehaviour, IGvrGazePointer {
 	/// ray sent from the camera on the object.
 	public void OnGazeStay(Camera camera, GameObject targetObject, Vector3 intersectionPosition,
 		bool isInteractive) {
-		SetGazeTarget(intersectionPosition, isInteractive);
+		SetGazeTarget(intersectionPosition, isInteractiveAndIsNotNull);
 	}
 
 	/// Called when the user's look no longer intersects an object previously
@@ -163,15 +167,16 @@ public class CameraReticle : MonoBehaviour, IGvrGazePointer {
 	/// the user begins pressing the trigger.
 	public void OnGazeTriggerStart(Camera camera) {
 		// Put your reticle trigger start logic here :)
-		//if(isInteractiveAndIsNotNull)
-		if (targetObj != null && targetObj.name == "Gelios_high") {
-			canZoom = true;
-			Debug.Log("zoom!");
-		} else {
-			kReticleGrowthAngle = kReticleGrowthAngle * 10f/*** colliderMultiplier*/;
-			if (canZoom) {
-				zoomIn = true;
-				StartCoroutine (zoom (camera.GetComponentsInChildren<Camera> ()));
+		if(isInteractiveAndIsNotNull && targetObj.name != "Text") {
+			if (targetObj.name == "Gelios_high") {
+				canZoom = true;
+				Debug.Log ("zoom!");
+			} else {
+				kReticleGrowthAngle = kReticleGrowthAngle * 10f/*** colliderMultiplier*/;
+				if (canZoom) {
+					zoomIn = true;
+					StartCoroutine (zoom (camera.GetComponentsInChildren<Camera> ()));
+				}
 			}
 		}
 	}
@@ -183,24 +188,24 @@ public class CameraReticle : MonoBehaviour, IGvrGazePointer {
 			yield return null;
 		}
 		foreach (Camera camera in lrCamera)
-			camera.fieldOfView = 80f;
-		zoomIn = false;
+			camera.fieldOfView = 75f;
 	}
 
 	/// Called when a trigger event is finished. This is practically when
 	/// the user releases the trigger.
 	public void OnGazeTriggerEnd(Camera camera) {
 		// Put your reticle trigger end logic here :)
-		if (isInteractiveAndIsNotNull && targetObj.name != "Text") {
+		if (shotsEnabled && isInteractiveAndIsNotNull && EventManager.isPhotogenic(targetObj)) {
+			headCanvas.SetActive (false);
 			snapshot.Play ();
-			if (targetObj.tag.Contains("Animal"))
+			if (targetObj.tag.Contains ("Animal"))
 				Debug.Log (isFacing (targetObj) ? "Nice shot!" : "Close but no cigar!");
 			cameraShot.TakeCameraShot (materialComp.GetFloat ("_OuterDiameter") - materialComp.GetFloat ("_InnerDiameter"));
-
 			ScoreManager.changeScore (scanWithinReticle ());
-		}
+		} 
 		zoomIn = false;
 		StartCoroutine (resizeDown ());
+		headCanvas.SetActive (true);
 	}
 
 	private IEnumerator resizeDown() {
@@ -324,7 +329,7 @@ public class CameraReticle : MonoBehaviour, IGvrGazePointer {
 	}
 
 	public HashSet<GameObject> scanWithinReticle() {
-		numGOmap.Clear ();
+		registeredHitsByGO.Clear ();
 		HashSet<GameObject> uniqueHits = new HashSet<GameObject> ();
 		RaycastHit hit = new RaycastHit ();
 		GameObject hit_go;
@@ -336,20 +341,20 @@ public class CameraReticle : MonoBehaviour, IGvrGazePointer {
 		int zSteps = Mathf.FloorToInt (360f / inverseResolution),
 			ySteps = 50;
 		int numHitForGO = 0;
-		Quaternion yRotation = Quaternion.Euler(up * (reticleInnerAngle / 50)),
+		Quaternion yRotation = Quaternion.Euler(up * (reticleInnerAngle / 75)),
 		zRotation = Quaternion.Euler(forward * inverseResolution);
 		for(int z = 0; z < ySteps; z++) {
 			direction = yRotation * direction;
 			for(int x = 0; x < zSteps; x++) {
 				direction = zRotation * direction;
-				Physics.Raycast (origin, direction, out hit);
+				Physics.Raycast (origin, direction, out hit, Mathf.Infinity, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore);
 				if (hit.transform != null) { 
 					hit_go = hit.transform.gameObject;
 					if (hit_go.GetComponent<EventTrigger> () != null && !uniqueHits.Contains (hit_go)) {
-						if (!numGOmap.TryGetValue (hit_go, out numHitForGO))
-							numGOmap.Add (hit_go, 1);
+						if (!registeredHitsByGO.TryGetValue (hit_go, out numHitForGO))
+							registeredHitsByGO.Add (hit_go, 1);
 						else
-							numGOmap [hit_go] = ++numHitForGO;
+							registeredHitsByGO [hit_go] = ++numHitForGO;
 						uniqueHits.Add (hit_go);
 					}
 				}

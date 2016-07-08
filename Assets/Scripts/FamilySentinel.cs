@@ -4,7 +4,7 @@ using System.Collections;
 public class FamilySentinel : MonoBehaviour {
 	public bool notSearched = true;
 	void Start () {
-		EventManager.StartListening (gameObject, Alert);	
+		EventManager.RegisterGameobject (gameObject, Alert);	
 	}
 
 	public void Alert () {

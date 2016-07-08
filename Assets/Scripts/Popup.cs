@@ -2,13 +2,13 @@
 using System.Collections;
 
 public class Popup : MonoBehaviour {
+	private GameObject monkey;
 	bool runOnce,
 		 dropped;
 	int yTranslate;
-	GameObject tree;
 
 	void Start() {
-		tree = GameObject.Find ("BananaTrees");
+		monkey = GameObject.Find ("Monkey");
 		dropped = false;
 		runOnce = false;
 		yTranslate = 10;
@@ -19,7 +19,7 @@ public class Popup : MonoBehaviour {
 		GameObject summoned;
 		AudioSource sound;
 		if (!runOnce) {
-			foreach (string child in DataService.getChildren (this.gameObject.name)) {
+			foreach (string child in DataService.getChildren (gameObject.name)) {
 				summoned = GameObject.Find (child);
 				summoned.transform.Translate (new Vector3 (0, 10, 0));
 				sound = summoned.GetComponent<AudioSource> ();
@@ -40,11 +40,11 @@ public class Popup : MonoBehaviour {
 	}
 
 	private void move() {
-			tree.transform.Translate (new Vector3 (0, yTranslate, 0));
+			monkey.transform.Translate (new Vector3 (0, yTranslate, 0));
 	}
 
 	public IEnumerator Switch() {
-		yield return new WaitForSeconds (4.0f);
+		yield return new WaitForSeconds (1.3f);
 		yTranslate = -yTranslate;
 		move ();
 		yTranslate = -yTranslate;

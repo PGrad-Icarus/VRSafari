@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using System.Collections.Generic;
 
 public class Family : MonoBehaviour {
@@ -11,15 +12,17 @@ public class Family : MonoBehaviour {
 		countMembers = new Dictionary <GameObject, int> ();
 		for (int child = 0; child < transform.childCount; child++) {
 			go = transform.GetChild (child).gameObject;
-			if (countMembers.TryGetValue (go, out numGOs))
-				countMembers [go] = ++numGOs;
-			else
-				countMembers.Add (go, 1);
+			if (EventManager.isPhotogenic (go)) {
+				if (countMembers.TryGetValue (go, out numGOs))
+					countMembers [go] = ++numGOs;
+				else
+					countMembers.Add (go, 1);
+			}
 		}
 	}
 
 	void Update () {
-		if (!open && CameraReticle.numGOmap.Count == 0) {
+		if (!open && CameraReticle.registeredHitsByGO.Count == 0) {
 			BroadcastMessage ("Open");
 			open = true;
 		}
@@ -27,15 +30,12 @@ public class Family : MonoBehaviour {
 
 	public void searchFamily () {
 		int totalHits = 0,
-			numHits = 0,
-			totalScore = 0;
+			numHits = 0;
 		foreach (var item in countMembers) { 
-			if (CameraReticle.numGOmap.TryGetValue (item.Key, out numHits)) {
+			if (CameraReticle.registeredHitsByGO.TryGetValue (item.Key, out numHits)) 
 				totalHits += numHits;
-				totalScore += DataService.getScore (item.Key);
-			}
 		}
-		ScoreManager.AddPoints (totalScore * totalHits);
+		ScoreManager.MultiplyScore (totalHits);
 		BroadcastMessage ("Searched");
 		open = false;
 	}
