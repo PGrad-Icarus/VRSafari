@@ -2,18 +2,27 @@
 using System.Collections;
 
 public class SpawnRhino : MonoBehaviour, Mover {
-	private NavMeshAgent nvAgent;
+	public float maxPlayerSpeed = 10;
+	private NavMeshAgent rhinoNvAgent;
 	private bool moving = false;
 	private Transform playerTransform;
+	private NavMeshAgent playerNVagent;
+
 	// Use this for initialization
 	void Start () {
-		nvAgent = GetComponentInChildren <NavMeshAgent> ();
+		rhinoNvAgent = GetComponentInChildren <NavMeshAgent> ();
+		playerNVagent = GameObject.Find ("Player").GetComponent<NavMeshAgent> ();
 		EventManager.RegisterEvent ("Stop", stopMoving);
 	}
 
 	void Update () {
-		if (moving)
-			nvAgent.SetDestination (playerTransform.position);
+		if (moving) {
+			rhinoNvAgent.SetDestination (playerTransform.position);
+			if (playerNVagent.speed < maxPlayerSpeed) {
+				rhinoNvAgent.speed += 0.1f;
+				playerNVagent.speed += 0.5f;
+			}
+		}
 	}
 		
 	public void getMoving () {

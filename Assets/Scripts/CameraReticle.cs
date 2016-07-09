@@ -195,7 +195,7 @@ public class CameraReticle : MonoBehaviour, IGvrGazePointer {
 	/// the user releases the trigger.
 	public void OnGazeTriggerEnd(Camera camera) {
 		// Put your reticle trigger end logic here :)
-		if (shotsEnabled && isInteractiveAndIsNotNull && EventManager.isPhotogenic(targetObj)) {
+		if (shotsEnabled && isInteractiveAndIsNotNull && EventManager.isPhotogenic(targetObj) && materialComp.GetFloat ("_InnerDiameter") > 1.3f) {
 			headCanvas.SetActive (false);
 			snapshot.Play ();
 			if (targetObj.tag.Contains ("Animal"))

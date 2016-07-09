@@ -2,15 +2,12 @@
 using System.Collections;
 
 public class Popup : MonoBehaviour {
-	private GameObject monkey;
-	bool runOnce,
-		 dropped;
+	public GameObject monkey,
+					  monkeyJoke;
+	bool runOnce = false;
 	int yTranslate;
 
 	void Start() {
-		monkey = GameObject.Find ("Monkey");
-		dropped = false;
-		runOnce = false;
 		yTranslate = 10;
 	}
 
@@ -32,22 +29,25 @@ public class Popup : MonoBehaviour {
 
 	//"Spawn" (make visible) a hidden object for a short period of time.
 	public void sleight() {
-		if (!dropped) {
-			dropped = true;
-			move ();
-			StartCoroutine (Switch ());
-		}
+		move ();
+		StartCoroutine (Switch ());
 	}
 
 	private void move() {
-			monkey.transform.Translate (new Vector3 (0, yTranslate, 0));
+		monkey.transform.Translate (new Vector3 (0, yTranslate, 0));
+		yTranslate = -yTranslate;
 	}
 
-	public IEnumerator Switch() {
+	private IEnumerator Switch() {
 		yield return new WaitForSeconds (1.3f);
-		yTranslate = -yTranslate;
 		move ();
-		yTranslate = -yTranslate;
-		dropped = false;
+		monkeyJoke.SetActive (true);
+		StartCoroutine (subliminalMonkeyJoke ());
+	}
+
+	private IEnumerator subliminalMonkeyJoke () {
+		
+		yield return new WaitForSeconds (0.05f);
+		monkeyJoke.SetActive (false);
 	}
 }
