@@ -26,6 +26,18 @@ public class ScoreManager : Singleton<ScoreManager> {
 		scoreTransform = scoreImage.transform;
 	}
 
+	void OnEnable () {
+		GvrViewer.Instance.OnTilt += AddRoll;
+	}
+
+	public static void AddRoll () {
+		if (Instance.score >= 20) {
+			Instance.rolls += 1;
+			Instance.rollText.text = string.Format ("x{0}", (++Instance.rolls).ToString());
+			Instance.score -= 20;
+		}
+	}
+
 	public static void AddPoints(int hits) {
 		Instance.picScore += hits;
 	}

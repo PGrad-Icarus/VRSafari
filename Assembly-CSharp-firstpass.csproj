@@ -62,6 +62,7 @@
      <None Include="Assets\Palm Trees\Shaders\WavingDoublePassCullBackface.shader" />
      <None Include="Assets\RainMaker\Readme.txt" />
      <None Include="Assets\Shaders\ItemGlow.shader" />
+     <None Include="Assets\Mr. Mo Base Character\Readme.txt" />
      <None Include="Assets\GoogleVR\Resources\SolidColor.shader" />
  <Reference Include="UnityEngine.UI">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>

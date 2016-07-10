@@ -4,7 +4,8 @@ using System.Collections;
 public class Popup : MonoBehaviour {
 	public GameObject monkey,
 					  monkeyJoke;
-	bool runOnce = false;
+	bool runOnce = false,
+		 dropped = true;
 	int yTranslate;
 
 	void Start() {
@@ -29,25 +30,25 @@ public class Popup : MonoBehaviour {
 
 	//"Spawn" (make visible) a hidden object for a short period of time.
 	public void sleight() {
-		move ();
-		StartCoroutine (Switch ());
+		if (dropped) {
+			move ();
+			StartCoroutine (Switch ());
+		}
 	}
 
 	private void move() {
 		monkey.transform.Translate (new Vector3 (0, yTranslate, 0));
 		yTranslate = -yTranslate;
+		dropped = false;
 	}
 
 	private IEnumerator Switch() {
 		yield return new WaitForSeconds (1.3f);
 		move ();
+		yield return new WaitForSeconds (0.05f);
 		monkeyJoke.SetActive (true);
-		StartCoroutine (subliminalMonkeyJoke ());
-	}
-
-	private IEnumerator subliminalMonkeyJoke () {
-		
 		yield return new WaitForSeconds (0.05f);
 		monkeyJoke.SetActive (false);
+		dropped = true;
 	}
 }

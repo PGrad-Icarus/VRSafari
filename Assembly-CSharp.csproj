@@ -140,6 +140,7 @@
      <None Include="Assets\Palm Trees\Shaders\WavingDoublePassCullBackface.shader" />
      <None Include="Assets\RainMaker\Readme.txt" />
      <None Include="Assets\Shaders\ItemGlow.shader" />
+     <None Include="Assets\Mr. Mo Base Character\Readme.txt" />
      <None Include="Assets\GoogleVR\Resources\SolidColor.shader" />
  <Reference Include="Assembly-UnityScript-firstpass">
  <HintPath>/Users/gpstudent/Desktop/GradUSC/VRSafari/Library/ScriptAssemblies/Assembly-UnityScript-firstpass.dll</HintPath>
