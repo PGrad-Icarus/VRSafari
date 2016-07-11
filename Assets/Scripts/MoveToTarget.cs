@@ -3,7 +3,6 @@ using System.Collections;
 
 public class MoveToTarget : MonoBehaviour, Mover {
 	public GameObject target;
-	public bool moveOnTrigger = false;
 	private bool moving = false;
 	private NavMeshAgent nvAgent;
 	private bool stopped = false;
@@ -12,10 +11,8 @@ public class MoveToTarget : MonoBehaviour, Mover {
 	// Use this for initialization
 	void Start () {
 		nvAgent = GetComponent<NavMeshAgent> ();
-		if (!moveOnTrigger) {
-			EventManager.RegisterEvent ("Move", getMoving);
-			EventManager.RegisterEvent ("Stop", stopMoving);
-		}
+		EventManager.RegisterEvent ("Move", getMoving);
+		EventManager.RegisterEvent ("Stop", stopMoving);
 		terrainBounds = GameObject.FindGameObjectWithTag ("Level").GetComponent<Terrain> ().terrainData.size;
 		terrainBounds.x /= 2;
 	}
@@ -38,6 +35,7 @@ public class MoveToTarget : MonoBehaviour, Mover {
 
 	public void stopMoving () {
 		nvAgent.Stop ();
+		moving = false;
 		stopped = true;
 	}
 }

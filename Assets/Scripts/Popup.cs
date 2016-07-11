@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Popup : MonoBehaviour {
+public class Popup : MonoBehaviour, IGvrGazeResponder {
 	public GameObject monkey,
 					  monkeyJoke;
 	bool runOnce = false,
@@ -50,5 +50,18 @@ public class Popup : MonoBehaviour {
 		yield return new WaitForSeconds (0.05f);
 		monkeyJoke.SetActive (false);
 		dropped = true;
+	}
+
+	public void OnGazeEnter () {
+		sleight ();
+	}
+
+	public void OnGazeStay () {
+	}
+
+	public void OnGazeExit () {
+	}
+
+	public void OnGazeTrigger () {
 	}
 }

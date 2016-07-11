@@ -11,6 +11,7 @@ public class EventManager : Singleton <EventManager> {
 	private Transform cameraTransform;
 
 	void Awake () {
+		DontDestroyOnLoad(gameObject);
 		objToEvent = new Dictionary<GameObject, UnityEvent> ();
 		strToEvent = new Dictionary<string, UnityEvent> ();
 		cameraTransform = GameObject.Find ("VR Main Camera").transform;
@@ -72,5 +73,11 @@ public class EventManager : Singleton <EventManager> {
 		Collider collider;
 		collider = go.GetComponent<Collider> ();
 		return collider != null && !collider.isTrigger && go.GetComponent<EventTrigger> () != null;
+	}
+
+	public void OnDestroy () {
+		objToEvent.Clear ();
+		strToEvent.Clear ();
+		base.OnDestroy ();
 	}
 }

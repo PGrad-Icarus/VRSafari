@@ -4,16 +4,14 @@ using System.Collections;
 
 public class MoveForward : MonoBehaviour, Mover {
 	public float speed;
-	public bool moveOnTrigger = false;
 	private Vector3 motion;
 	private bool moving = false;
 	private Vector3 terrainBounds;
+	private Quaternion appliedRotation;
 
 	void Start() {
-		if(!moveOnTrigger) {
-			EventManager.RegisterEvent ("Move", getMoving);
-			EventManager.RegisterEvent ("Stop", stopMoving);
-		}
+		EventManager.RegisterEvent ("Move", getMoving);
+		EventManager.RegisterEvent ("Stop", stopMoving);
 		terrainBounds = GameObject.FindGameObjectWithTag("Level").GetComponent<Terrain> ().terrainData.size;
 		terrainBounds.x /= 2;
 	}

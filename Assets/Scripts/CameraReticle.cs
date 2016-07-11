@@ -27,7 +27,7 @@ using System.Collections.Generic;
 [RequireComponent(typeof(AudioSource))]
 [RequireComponent(typeof(GazeInputModule))]
 public class CameraReticle : MonoBehaviour, IGvrGazePointer {
-	public static Dictionary<GameObject,int> registeredHitsByGO;
+	public static Dictionary<GameObject,bool> mapGOtoFacing;
 	public static bool shotsEnabled = true;
 	//Reference to CameraShot sibling component
 	private CameraShot cameraShot;
@@ -91,7 +91,7 @@ public class CameraReticle : MonoBehaviour, IGvrGazePointer {
 
 		headTransform = GameObject.Find ("PlayerHead").GetComponent<GvrHead> ().transform;
 
-		registeredHitsByGO = new Dictionary<GameObject,int> ();
+		mapGOtoFacing = new Dictionary<GameObject,bool> ();
 
 		headCanvas = GameObject.Find("HeadCanvas");
 	}
@@ -198,8 +198,6 @@ public class CameraReticle : MonoBehaviour, IGvrGazePointer {
 		if (shotsEnabled && isInteractiveAndIsNotNull && EventManager.isPhotogenic(targetObj) && materialComp.GetFloat ("_InnerDiameter") > 1.3f) {
 			headCanvas.SetActive (false);
 			snapshot.Play ();
-			if (targetObj.tag.Contains ("Animal"))
-				Debug.Log (isFacing (targetObj) ? "Nice shot!" : "Close but no cigar!");
 			cameraShot.TakeCameraShot (materialComp.GetFloat ("_OuterDiameter") - materialComp.GetFloat ("_InnerDiameter"));
 			ScoreManager.changeScore (scanWithinReticle ());
 		} 
@@ -320,7 +318,7 @@ public class CameraReticle : MonoBehaviour, IGvrGazePointer {
 	}
 
 	private bool isFacing(GameObject targetObject) {
-		return Vector3.Angle (targetObject.transform.forward, transform.position - targetObject.transform.position) < 45;
+		return Vector3.Angle (targetObject.transform.forward, transform.position - targetObject.transform.position) < 90;
 	}
 
 	private bool isFullShot(int hits) {
@@ -329,7 +327,7 @@ public class CameraReticle : MonoBehaviour, IGvrGazePointer {
 	}
 
 	public HashSet<GameObject> scanWithinReticle() {
-		registeredHitsByGO.Clear ();
+		mapGOtoFacing.Clear ();
 		HashSet<GameObject> uniqueHits = new HashSet<GameObject> ();
 		RaycastHit hit = new RaycastHit ();
 		GameObject hit_go;
@@ -351,10 +349,7 @@ public class CameraReticle : MonoBehaviour, IGvrGazePointer {
 				if (hit.transform != null) { 
 					hit_go = hit.transform.gameObject;
 					if (hit_go.GetComponent<EventTrigger> () != null && !uniqueHits.Contains (hit_go)) {
-						if (!registeredHitsByGO.TryGetValue (hit_go, out numHitForGO))
-							registeredHitsByGO.Add (hit_go, 1);
-						else
-							registeredHitsByGO [hit_go] = ++numHitForGO;
+						mapGOtoFacing.Add (hit_go, isFacing(hit_go));
 						uniqueHits.Add (hit_go);
 					}
 				}

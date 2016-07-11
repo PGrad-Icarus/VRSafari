@@ -4,38 +4,35 @@ using UnityEngine.EventSystems;
 using System.Collections.Generic;
 
 public class Family : MonoBehaviour {
-	private Dictionary <GameObject, int> countMembers;
+	private HashSet <GameObject> countMembers;
 	private bool open = true;
 	void Awake () {
 		GameObject go;
 		int numGOs;
-		countMembers = new Dictionary <GameObject, int> ();
+		countMembers = new HashSet<GameObject> ();
 		for (int child = 0; child < transform.childCount; child++) {
 			go = transform.GetChild (child).gameObject;
-			if (EventManager.isPhotogenic (go)) {
-				if (countMembers.TryGetValue (go, out numGOs))
-					countMembers [go] = ++numGOs;
-				else
-					countMembers.Add (go, 1);
-			}
+			if (EventManager.isPhotogenic (go) && !countMembers.Contains(go)) 
+				countMembers.Add (go);
 		}
 	}
 
 	void Update () {
-		if (!open && CameraReticle.registeredHitsByGO.Count == 0) {
+		if (!open && CameraReticle.mapGOtoFacing.Count == 0) {
 			BroadcastMessage ("Open");
 			open = true;
 		}
 	}
 
 	public void searchFamily () {
-		int totalHits = 0,
-			numHits = 0;
+		int totalHits = 0;
+		bool isFacing;
 		foreach (var item in countMembers) { 
-			if (CameraReticle.registeredHitsByGO.TryGetValue (item.Key, out numHits)) 
-				totalHits += numHits;
+			if (CameraReticle.mapGOtoFacing.TryGetValue (item, out isFacing) && isFacing)
+				totalHits++;
 		}
-		ScoreManager.MultiplyScore (totalHits);
+		if (totalHits == countMembers.Count)
+			ScoreManager.MultiplyScore (totalHits);
 		BroadcastMessage ("Searched");
 		open = false;
 	}

@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 public class ScoreManager : Singleton<ScoreManager> {
 	public int score = 0,
-			   rolls = 10,
+			   rolls = 5,
 			   maxScore = 100;
 	public Text scoreText,
 				rollText,
@@ -13,29 +13,39 @@ public class ScoreManager : Singleton<ScoreManager> {
 	public Image rollImage,
 			     scoreImage;
 	public GameObject HUDPanel, 
-					  losePanel;
+					  loseObject;
 	private Transform scoreTransform;
 	private Vector3 scoreRotation;
 	private int multiplier = 1,
-				picScore = 0;
+				picScore = 0,
+				scoreToGetRoll = 10,
+				rollCost = 20;
+	private Queue<HashSet<GameObject>> lastFivePics;
+	private HashSet<GameObject> newPicSet;
 	protected ScoreManager() {}
 
+	void Awake () {
+		DontDestroyOnLoad(gameObject);
+	}
+
 	void Start() {
+		lastFivePics = new Queue<HashSet<GameObject>> ();
+		newPicSet = new HashSet<GameObject> ();
 		scoreText.text = string.Format ("{0}/{1}", 0, Instance.maxScore);
 		rollText.text = string.Format("x{0}",rolls.ToString());
 		scoreTransform = scoreImage.transform;
 	}
 
-	void OnEnable () {
-		GvrViewer.Instance.OnTilt += AddRoll;
+	public static void AddBonusRoll () {
+		Instance.rolls += 1;
 	}
 
-	public static void AddRoll () {
-		if (Instance.score >= 20) {
-			Instance.rolls += 1;
-			Instance.rollText.text = string.Format ("x{0}", (++Instance.rolls).ToString());
-			Instance.score -= 20;
+	public static void AddRollWithCost () {
+		if (Instance.score >= Instance.rollCost) {
+			Instance.rolls++;
+			Instance.score -= Instance.rollCost;
 		}
+		ShowNewScore ();
 	}
 
 	public static void AddPoints(int hits) {
@@ -52,20 +62,17 @@ public class ScoreManager : Singleton<ScoreManager> {
 	}
 
 	private static void RemoveRoll() {
-		if (Instance.rolls > 1)
-			Instance.rollText.text = string.Format ("x{0}", (--Instance.rolls).ToString ());
-		else
+		Instance.rollText.text = string.Format ("x{0}", (--Instance.rolls).ToString ());
+		if (Instance.rolls < 1)
 			Instance.StartCoroutine (Instance.WaitForShotThenEndGame ());
 	}
 
 	private IEnumerator WaitForShotThenEndGame () {
 		yield return new WaitForSeconds (0.1f);
-		Instance.rollImage.enabled = Instance.rollText.enabled = false;
-		Instance.HUDPanel.SetActive (false);
-		Instance.losePanel.SetActive (true);
+		Instance.loseObject.SetActive (true);
 		EventManager.TriggerEvent ("Stop");
-		Image loseImage = Instance.losePanel.GetComponent<Image> ();
-		loseImage.CrossFadeAlpha (255f, 1, false);
+		//Image loseImage = Instance.losePanel.GetComponent<Image> ();
+		//loseImage.CrossFadeAlpha (255f, 1, false);
 		CameraReticle.shotsEnabled = false;
 	}
 
@@ -79,19 +86,51 @@ public class ScoreManager : Singleton<ScoreManager> {
 		Instance.scoreTransform.rotation = Quaternion.Euler (Instance.scoreTransform.right * -0.05f * (Instance.score - oldScore) ) * Instance.scoreTransform.rotation;
 	}
 
+	public static void ShowNewScore () {
+		Instance.rollText.text = string.Format ("x{0}", Instance.rolls.ToString());
+		Instance.scoreText.text = string.Format ("{0}/{1}", Instance.score.ToString(), Instance.maxScore);
+	}
+		
+	public static bool CanGetBonus (HashSet<GameObject> newPicSet) {
+		foreach (var pic in Instance.lastFivePics) {
+			if (pic.SetEquals (newPicSet))
+				return false;
+		}
+		return true;
+	}
+
 	public static void changeScore(HashSet<GameObject> hits) {
 		int oldScore = Instance.score,
 			objScore = 0;
-		foreach (GameObject go in hits) {
-			if (!DataService.getScore (go, out objScore))
-				throw new UnityException("Object not registered with database, cannot get score!");
-			AddPoints (objScore);
-			EventManager.TriggerGameobject (go);
+		bool notOld = CanGetBonus (hits);
+		if (notOld) {
+			foreach (GameObject go in hits) {
+				if (!DataService.getScore (go, out objScore))
+					throw new UnityException ("Object not registered with database, cannot get score!");
+				AddPoints (objScore);
+				Instance.newPicSet.Add (go);
+				if (CameraReticle.mapGOtoFacing[go])
+					EventManager.TriggerGameobject (go);
+			}
+		} else {
+			foreach (GameObject go in hits) {
+				if (!DataService.getScore (go, out objScore))
+					throw new UnityException ("Object not registered with database, cannot get score!");
+				AddPoints (objScore);
+				Instance.newPicSet.Add (go);
+			}
 		}
 		ApplyMultiplier ();
+		if (Instance.picScore >= Instance.scoreToGetRoll && notOld) 
+			AddBonusRoll ();
+		else
+			RemoveRoll ();
+		if (Instance.lastFivePics.Count >= 5) 
+			Instance.lastFivePics.Dequeue ();
+		Instance.lastFivePics.Enqueue (Instance.newPicSet);
 		CumulateScore (oldScore);
 		ResetPicScore ();
-		RemoveRoll ();
-		CameraReticle.registeredHitsByGO.Clear ();
+		ShowNewScore ();
+		CameraReticle.mapGOtoFacing.Clear ();
 	}
 }

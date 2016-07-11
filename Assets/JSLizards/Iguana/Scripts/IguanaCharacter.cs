@@ -3,13 +3,14 @@ using System.Collections;
 
 public class IguanaCharacter : MonoBehaviour, Mover {
 	Animator iguanaAnimator;
-	private bool moving = false;
-	
+	private bool moving = false,
+				 attacking = false;
+
 	void Start () {
-		moving = true;
 		iguanaAnimator = GetComponent<Animator> ();
 		EventManager.RegisterEvent ("Move", getMoving);
 		EventManager.RegisterEvent ("Stop", stopMoving);
+		EventManager.RegisterGameobject (gameObject, multiplyOnAttack);
 	}
 
 	void Update () {
@@ -17,14 +18,29 @@ public class IguanaCharacter : MonoBehaviour, Mover {
 			Move (1f, 0f);
 		else
 			Move (0f, 0f);
+		if (Random.Range (1, 100) == 50) {
+			Attack ();
+			StartCoroutine (Attacking ());
+		}
 	}
-	
+
+	private IEnumerator Attacking () {
+		attacking = true;
+		yield return new WaitForSeconds (2.5f);
+		attacking = false;
+	}
+
 	public void Attack(){
 		iguanaAnimator.SetTrigger("Attack");
 	}
 	
 	public void Hit(){
 		iguanaAnimator.SetTrigger("Hit");
+	}
+
+	public void multiplyOnAttack () {
+		if (attacking)
+			ScoreManager.MultiplyScore (2);
 	}
 	
 	/*public void Eat(){
