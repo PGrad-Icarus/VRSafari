@@ -10,7 +10,7 @@ public class DataService : Singleton<DataService> {
 	static string DatabaseName = "safari.db";
 	private SQLiteConnection _connection;
 
-	public DataService() {
+	void Awake () {
 		#if UNITY_EDITOR
 				var dbPath = string.Format(@"Assets/StreamingAssets/{0}",DatabaseName);
 		#else

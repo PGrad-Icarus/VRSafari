@@ -8,13 +8,10 @@ using System.Collections.Generic;
 public class EventManager : Singleton <EventManager> {
 	private Dictionary <GameObject, UnityEvent> objToEvent;
 	private Dictionary <string, UnityEvent> strToEvent;
-	private Transform cameraTransform;
 
 	void Awake () {
-		DontDestroyOnLoad(gameObject);
 		objToEvent = new Dictionary<GameObject, UnityEvent> ();
 		strToEvent = new Dictionary<string, UnityEvent> ();
-		cameraTransform = GameObject.Find ("VR Main Camera").transform;
 	}
 
 	public static void RegisterGameobject (GameObject obj, UnityAction listener) {
@@ -73,11 +70,5 @@ public class EventManager : Singleton <EventManager> {
 		Collider collider;
 		collider = go.GetComponent<Collider> ();
 		return collider != null && !collider.isTrigger && go.GetComponent<EventTrigger> () != null;
-	}
-
-	public void OnDestroy () {
-		objToEvent.Clear ();
-		strToEvent.Clear ();
-		base.OnDestroy ();
 	}
 }

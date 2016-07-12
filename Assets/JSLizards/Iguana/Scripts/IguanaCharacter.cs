@@ -18,20 +18,19 @@ public class IguanaCharacter : MonoBehaviour, Mover {
 			Move (1f, 0f);
 		else
 			Move (0f, 0f);
-		if (Random.Range (1, 100) == 50) {
+		if (Random.Range (1, 60) == 30) 
 			Attack ();
-			StartCoroutine (Attacking ());
-		}
 	}
 
 	private IEnumerator Attacking () {
-		attacking = true;
-		yield return new WaitForSeconds (2.5f);
+		yield return new WaitForSeconds (3f);
 		attacking = false;
 	}
 
 	public void Attack(){
+		attacking = true;
 		iguanaAnimator.SetTrigger("Attack");
+		StartCoroutine (Attacking ());
 	}
 	
 	public void Hit(){

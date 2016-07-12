@@ -28,7 +28,7 @@ using System.Collections.Generic;
 [RequireComponent(typeof(GazeInputModule))]
 public class CameraReticle : MonoBehaviour, IGvrGazePointer {
 	public static Dictionary<GameObject,bool> mapGOtoFacing;
-	public static bool shotsEnabled = true;
+	public static bool shotsEnabled = false;
 	//Reference to CameraShot sibling component
 	private CameraShot cameraShot;
 
@@ -42,7 +42,8 @@ public class CameraReticle : MonoBehaviour, IGvrGazePointer {
 	private Material materialComp,
 					 focusComp;
 	private GameObject targetObj,
-					   headCanvas;
+					   headCanvas,
+					   pointsPanel;
 	private AudioSource snapshot;
 	private Transform headTransform;
 	private Vector3 targetLocalPosition;
@@ -58,6 +59,10 @@ public class CameraReticle : MonoBehaviour, IGvrGazePointer {
 	private const float kReticleMinInnerAngle = 0.0f;
 	// Minimum outer angle of the reticle (in degrees).
 	private const float kReticleMinOuterAngle = 0.5f;
+	// Maximum inner angle of the reticle (in degrees).
+	private const float kReticleMaxInnerAngle = 15f;
+	// Maximum outer angle of the reticle (in degrees).
+	private const float kReticleMaxOuterAngle = 15.5f;
 	// Angle at which to expand the reticle when intersecting with an object when not triggered
 	// (in degrees).
 	private float kReticleGrowthAngle = 1.5f;
@@ -94,6 +99,8 @@ public class CameraReticle : MonoBehaviour, IGvrGazePointer {
 		mapGOtoFacing = new Dictionary<GameObject,bool> ();
 
 		headCanvas = GameObject.Find("HeadCanvas");
+
+		pointsPanel = headCanvas.transform.GetChild (1).gameObject;
 	}
 
 	void OnEnable() {
@@ -167,6 +174,8 @@ public class CameraReticle : MonoBehaviour, IGvrGazePointer {
 	/// the user begins pressing the trigger.
 	public void OnGazeTriggerStart(Camera camera) {
 		// Put your reticle trigger start logic here :)
+		//Check to make sure targetObj still exists
+		isInteractiveAndIsNotNull &= targetObj != null;
 		if(isInteractiveAndIsNotNull && targetObj.name != "Text") {
 			if (targetObj.name == "Gelios_high") {
 				canZoom = true;
@@ -195,14 +204,25 @@ public class CameraReticle : MonoBehaviour, IGvrGazePointer {
 	/// the user releases the trigger.
 	public void OnGazeTriggerEnd(Camera camera) {
 		// Put your reticle trigger end logic here :)
+		//Check to make sure targetObj still exists
+		isInteractiveAndIsNotNull &= targetObj != null;
 		if (shotsEnabled && isInteractiveAndIsNotNull && EventManager.isPhotogenic(targetObj) && materialComp.GetFloat ("_InnerDiameter") > 1.3f) {
-			headCanvas.SetActive (false);
+			ClearScreen ();
 			snapshot.Play ();
 			cameraShot.TakeCameraShot (materialComp.GetFloat ("_OuterDiameter") - materialComp.GetFloat ("_InnerDiameter"));
 			ScoreManager.changeScore (scanWithinReticle ());
 		} 
 		zoomIn = false;
 		StartCoroutine (resizeDown ());
+		RestoreScreen ();
+	}
+
+	private void ClearScreen () {
+		headCanvas.SetActive (false);
+		pointsPanel.SetActive (false);
+	}
+
+	private void RestoreScreen () {
 		headCanvas.SetActive (true);
 	}
 
@@ -311,6 +331,13 @@ public class CameraReticle : MonoBehaviour, IGvrGazePointer {
 		if (interactive) {
 			reticleInnerAngle = kReticleMinInnerAngle + kReticleGrowthAngle;
 			reticleOuterAngle = kReticleMinOuterAngle + kReticleGrowthAngle;
+			if (reticleInnerAngle > kReticleMaxInnerAngle) {
+				reticleInnerAngle = kReticleMaxInnerAngle;
+			}
+
+			if (reticleOuterAngle > kReticleMaxOuterAngle) {
+				reticleOuterAngle = kReticleMaxOuterAngle;
+			}
 		} else {
 			reticleInnerAngle = kReticleMinInnerAngle;
 			reticleOuterAngle = kReticleMinOuterAngle;
@@ -338,7 +365,6 @@ public class CameraReticle : MonoBehaviour, IGvrGazePointer {
 				direction = forward;
 		int zSteps = Mathf.FloorToInt (360f / inverseResolution),
 			ySteps = 50;
-		int numHitForGO = 0;
 		Quaternion yRotation = Quaternion.Euler(up * (reticleInnerAngle / 75)),
 		zRotation = Quaternion.Euler(forward * inverseResolution);
 		for(int z = 0; z < ySteps; z++) {
@@ -348,7 +374,7 @@ public class CameraReticle : MonoBehaviour, IGvrGazePointer {
 				Physics.Raycast (origin, direction, out hit, Mathf.Infinity, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore);
 				if (hit.transform != null) { 
 					hit_go = hit.transform.gameObject;
-					if (hit_go.GetComponent<EventTrigger> () != null && !uniqueHits.Contains (hit_go)) {
+					if (!uniqueHits.Contains (hit_go) && hit_go.GetComponent<EventTrigger> () != null) {
 						mapGOtoFacing.Add (hit_go, isFacing(hit_go));
 						uniqueHits.Add (hit_go);
 					}

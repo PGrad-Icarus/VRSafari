@@ -30,10 +30,8 @@ public class Popup : MonoBehaviour, IGvrGazeResponder {
 
 	//"Spawn" (make visible) a hidden object for a short period of time.
 	public void sleight() {
-		if (dropped) {
-			move ();
+		if (dropped) 
 			StartCoroutine (Switch ());
-		}
 	}
 
 	private void move() {
@@ -43,11 +41,12 @@ public class Popup : MonoBehaviour, IGvrGazeResponder {
 	}
 
 	private IEnumerator Switch() {
-		yield return new WaitForSeconds (1.3f);
+		move ();
+		yield return new WaitForSeconds (1.5f);
 		move ();
 		yield return new WaitForSeconds (0.05f);
 		monkeyJoke.SetActive (true);
-		yield return new WaitForSeconds (0.05f);
+		yield return new WaitForSeconds (0.1f);
 		monkeyJoke.SetActive (false);
 		dropped = true;
 	}

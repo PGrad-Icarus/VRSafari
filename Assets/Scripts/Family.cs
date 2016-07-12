@@ -8,7 +8,6 @@ public class Family : MonoBehaviour {
 	private bool open = true;
 	void Awake () {
 		GameObject go;
-		int numGOs;
 		countMembers = new HashSet<GameObject> ();
 		for (int child = 0; child < transform.childCount; child++) {
 			go = transform.GetChild (child).gameObject;

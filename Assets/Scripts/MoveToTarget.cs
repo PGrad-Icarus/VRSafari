@@ -7,10 +7,17 @@ public class MoveToTarget : MonoBehaviour, Mover {
 	private NavMeshAgent nvAgent;
 	private bool stopped = false;
 	private Vector3 terrainBounds;
+	private Animator animator;
 
 	// Use this for initialization
-	void Start () {
+	void Awake () {
 		nvAgent = GetComponent<NavMeshAgent> ();
+		animator = GetComponent <Animator> ();
+		if (animator != null)
+			animator.enabled = false;
+	}
+
+	void Start () {
 		EventManager.RegisterEvent ("Move", getMoving);
 		EventManager.RegisterEvent ("Stop", stopMoving);
 		terrainBounds = GameObject.FindGameObjectWithTag ("Level").GetComponent<Terrain> ().terrainData.size;
@@ -31,11 +38,15 @@ public class MoveToTarget : MonoBehaviour, Mover {
 		if(stopped)
 			nvAgent.Resume ();
 		moving = true;
+		if (animator != null)
+			animator.enabled = true;
 	}
 
 	public void stopMoving () {
 		nvAgent.Stop ();
 		moving = false;
 		stopped = true;
+		if (animator != null)
+			animator.enabled = false;
 	}
 }

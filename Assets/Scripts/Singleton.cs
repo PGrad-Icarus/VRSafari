@@ -41,9 +41,9 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 
 					if (_instance == null)
 					{
-						GameObject singleton = new GameObject();
-						_instance = singleton.AddComponent<T>();
-						singleton.name = "(singleton) "+ typeof(T).ToString();
+						GameObject singleton = new GameObject ();
+						_instance = singleton.AddComponent<T> ();
+						singleton.name = "(singleton) " + typeof(T).ToString ();
 
 						/**DontDestroyOnLoad(singleton);
 
@@ -59,6 +59,10 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 				return _instance;
 			}
 		}
+	}
+
+	public void OnLevelWasLoaded (int level) {
+		applicationIsQuitting = false;
 	}
 
 	private static bool applicationIsQuitting = false;

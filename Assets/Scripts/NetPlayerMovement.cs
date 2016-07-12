@@ -3,13 +3,11 @@ using UnityEngine.Networking;
 using System.Collections;
 
 public class NetPlayerMovement : MonoBehaviour {
-	Vector3 rotationMovement;
 	private float yaw = 0.0f;
 	private GameObject playerHead;
 	private Transform playerHeadTransform;
 
 	void Start () {
-		rotationMovement = Vector3.zero;
 		playerHead = GameObject.Find ("GvrHead");
 		playerHeadTransform = playerHead.transform;
 	}

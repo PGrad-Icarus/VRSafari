@@ -18,6 +18,7 @@ public class CameraShot : MonoBehaviour {
 	new private Camera camera;
 	//public Image image;
 	public Material frameMat;
+	private Texture initTxtr;
 	private bool takeShot = false;
 	//private int x, y;
 	private int[] dims;
@@ -29,6 +30,7 @@ public class CameraShot : MonoBehaviour {
 		camera = gameObject.GetComponent<Camera> ();
 		quarterWidth = resWidth / 2;
 		quarterHeight = resHeight / 2;
+		initTxtr = frameMat.mainTexture;
 	}
 	/**public static string ScreenShotName(int width, int height) {
 		return string.Format("{0}/Screenshots/screen_{1}x{2}_{3}.png", 
@@ -36,6 +38,11 @@ public class CameraShot : MonoBehaviour {
 			width, height, 
 			System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss"));
 	}*/
+
+	public void ClearFrame () {
+		frameMat.mainTexture = initTxtr;
+	}
+
 	public void TakeCameraShot(float reticleWidth) {
 		//this.screenReticleSize = (int) unityReticleSize * UNITY_TO_SCREEN_CONVERSION;
 		takeShot = true;

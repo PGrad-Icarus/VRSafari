@@ -4,7 +4,7 @@ using System.Collections;
 public class PlayerMovement : MonoBehaviour, Mover {
 	public GameObject target;
 	private NavMeshAgent nvAgent;
-	private bool stopped = false;
+	private bool moving = false;
 	private Vector3 terrainBounds;
 
 	// Use this for initialization
@@ -15,6 +15,11 @@ public class PlayerMovement : MonoBehaviour, Mover {
 		EventManager.RegisterEvent ("Stop", stopMoving);
 	}
 
+	void Update () {
+		if (moving)
+			nvAgent.SetDestination (target.transform.position);
+	}
+
 	public void startMoving () {
 		terrainBounds = GameObject.FindGameObjectWithTag ("Level").GetComponent<Terrain> ().terrainData.size;
 		terrainBounds.x /= 2;
@@ -22,14 +27,12 @@ public class PlayerMovement : MonoBehaviour, Mover {
 	}
 
 	public void getMoving () {
-		if(stopped)
-			nvAgent.Resume ();
-		else
-			nvAgent.SetDestination (target.transform.position);
+		moving = true;
+		nvAgent.Resume ();	
 	}
 
 	public void stopMoving () {
 		nvAgent.Stop ();
-		stopped = true;
+		moving = false;
 	}
 }

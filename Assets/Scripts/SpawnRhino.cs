@@ -7,26 +7,24 @@ public class SpawnRhino : MonoBehaviour, Mover {
 	private NavMeshAgent rhinoNvAgent;
 	private bool moving = false,
 				 triggered = false;
-	private Transform playerTransform;
 	private NavMeshAgent playerNVagent;
 
 	// Use this for initialization
 	void Start () {
+		EventManager.RegisterEvent ("Move", getMoving);
 		EventManager.RegisterEvent ("Stop", stopMoving);
 	}
 
 	void Update () {
-		if (moving) {
-			rhinoNvAgent.SetDestination (playerTransform.position);
-			if (playerNVagent.speed < maxPlayerSpeed) {
-				rhinoNvAgent.speed += 0.1f;
-				playerNVagent.speed += 0.4f;
-			}
+		if (moving && playerNVagent.speed < maxPlayerSpeed) {
+			rhinoNvAgent.speed += 0.1f;
+			playerNVagent.speed += 0.4f;
 		}
 	}
 		
 	public void getMoving () {
-		moving = true;
+		if (triggered)
+			moving = true;
 	}
 
 	public void stopMoving () {
@@ -36,10 +34,11 @@ public class SpawnRhino : MonoBehaviour, Mover {
 	void OnTriggerEnter (Collider other) {
 		if (!triggered && other.name == "Player") {
 			(rhino = (GameObject) Instantiate (rhino, transform.position + new Vector3 (0,5,0), Quaternion.identity)).transform.parent = transform;
+			rhino.GetComponent<MoveToTarget> ().target = other.gameObject;
 			rhinoNvAgent = rhino.GetComponent<NavMeshAgent> ();
 			playerNVagent = other.gameObject.GetComponent<NavMeshAgent> ();
-			playerTransform = other.transform;
-			triggered = moving = true;
+			triggered = true;
+			BroadcastMessage ("getMoving");
 		}
 	}
 }
